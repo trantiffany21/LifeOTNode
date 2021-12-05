@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 from resources.trips import trips
 from resources.users import users
+from resources.pois import pois
 
 import models
 import os 
@@ -44,7 +45,8 @@ CORS(users, origins=['http://localhost:3000'], supports_credentials=True)
 
 #use this blueprint (component)
 app.register_blueprint(trips,url_prefix='/trips')
-app.register_blueprint(users,url_prefix='/users')
+app.register_blueprint(pois,url_prefix='/pois')
+app.register_blueprint(users,url_prefix='/auth')
 
 if __name__ == '__main__':
     #when we start the app, setup our DB and tables as defined in models.py
