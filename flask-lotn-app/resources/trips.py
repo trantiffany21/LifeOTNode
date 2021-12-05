@@ -9,7 +9,7 @@ from playhouse.shortcuts import model_to_dict
 
 trips = Blueprint('trips', 'trips')
 
-#---------------SHOW ROUTE --------------------------------------
+#---------------SHOW ALL ROUTE --------------------------------------
 @trips.route('/')
 #@login_required
 def trips_index():
@@ -28,6 +28,18 @@ def trips_index():
     return jsonify({
         'data': trip_dicts,
         'message': f"Successfully found {len(trip_dicts)} trips", 
+        'status': 200
+    }),200
+
+#---------------SHOW ONE ROUTE --------------------------------------
+@trips.route('/<id>')
+#@login_required
+def get_one_trip(id):
+    trip = model_to_dict(models.Trip.get_by_id(id))
+
+    return jsonify({
+        'data': trip,
+        'message': f"Found trip {trip['name']}", 
         'status': 200
     }),200
 
@@ -54,4 +66,17 @@ def create_trip():
     ),201
 
 #---------------PUT/EDIT ROUTE ----------------------------------
+@trips.route('/<id>', methods=['PUT'])
+def update_trip(id):
+    payload = request.get_json()
+    update_query = models.Trip.update(**payload).where(models.Trip.id == id).execute()
+    return jsonify(
+        data = model_to_dict(models.Trip.get_by_id(id)),
+        message = 'Trip updated successfully',
+        status = 200
+    ),200
+
+
+
+
 #---------------DELETE/DESTROY ROUTE ----------------------------

@@ -45,7 +45,7 @@ CORS(users, origins=['http://localhost:3000'], supports_credentials=True)
 
 #use this blueprint (component)
 app.register_blueprint(trips,url_prefix='/trips')
-app.register_blueprint(pois,url_prefix='/pois')
+app.register_blueprint(pois,url_prefix='/trips/pois')
 app.register_blueprint(users,url_prefix='/auth')
 
 if __name__ == '__main__':

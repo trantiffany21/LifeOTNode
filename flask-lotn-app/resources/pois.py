@@ -31,6 +31,18 @@ def pois_index():
         'status': 200
     }),200
 
+#---------------SHOW ONE ROUTE --------------------------------------
+@pois.route('/<id>')
+def get_one_poi(id):
+    poi = model_to_dict(models.PointOfInterest.get_by_id(id))
+
+    return jsonify({
+        'data': poi,
+        'message': f"Found trip {poi['name']}", 
+        'status': 200
+    }),200
+
+
 #---------------POST/CREATE ROUTE -------------------------------
 @pois.route('/', methods=['POST'])
 def create_poi():
@@ -50,5 +62,16 @@ def create_poi():
         message = "Successfully create poi",
         status=201
     ),201
+
 #---------------PUT/EDIT ROUTE ----------------------------------
+@pois.route('/<id>', methods=['PUT'])
+def update_poi(id):
+    payload = request.get_json()
+    update_query = models.PointOfInterest.update(**payload).where(models.PointOfInterest.id == id).execute()
+    return jsonify(
+        data = model_to_dict(models.PointOfInterest.get_by_id(id)),
+        message = 'POI updated successfully',
+        status = 200
+    ),200
+
 #---------------DELETE/DESTROY ROUTE ----------------------------
