@@ -77,6 +77,20 @@ def update_trip(id):
     ),200
 
 
-
-
 #---------------DELETE/DESTROY ROUTE ----------------------------
+@trips.route('/<id>', methods=['DELETE'])
+def delete_trip(id):
+    trip = models.Trip.get_by_id(id)
+    trip.delete_instance(recursive=True)
+    # delete_query_trip = models.Trip.delete().where(models.Trip.id == id)
+    # nums_of_rows_delete_trip = delete_query_trip.execute()
+    #delete POIs associated
+    # delete_query_poi = models.PointOfInterest
+    # print(model_to_dict(delete_query_poi))
+    #models.PointOfInterest.delete().where(models.PointOfInterest.trip.id == id)
+    #nums_of_rows_delete_poi = delete_query_poi.execute()
+    return jsonify(
+        data={},
+        message = f"Successfully deleted trip with id: {id} and  POIs",
+        status = 200
+    ),200

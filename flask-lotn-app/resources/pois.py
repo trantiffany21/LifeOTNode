@@ -13,23 +13,30 @@ pois = Blueprint('pois', 'pois')
 @pois.route('/')
 #@login_required
 def pois_index():
-    result = models.PointOfInterest.select()
+    try:
+        result = models.PointOfInterest.select()
 
-    poi_dicts = []
-    for poi in result: 
-        poi_dict = model_to_dict(poi)
-        poi_dicts.append(poi_dict)
-    #change to current user's dogs
-    # current_user_dog_dicts = [model_to_dict(dog) for dog in current_user.dogs]
+        poi_dicts = []
+        for poi in result: 
+            poi_dict = model_to_dict(poi)
+            poi_dicts.append(poi_dict)
+        #change to current user's dogs
+        # current_user_dog_dicts = [model_to_dict(dog) for dog in current_user.dogs]
 
-    # for dog_dict in current_user_dog_dicts:
-    #     dog_dict['owner'].pop('password')
+        # for dog_dict in current_user_dog_dicts:
+        #     dog_dict['owner'].pop('password')
 
-    return jsonify({
-        'data': poi_dicts,
-        'message': f"Successfully found {len(poi_dicts)} pois", 
-        'status': 200
-    }),200
+        return jsonify({
+            'data': poi_dicts,
+            'message': f"Successfully found {len(poi_dicts)} pois", 
+            'status': 200
+        }),200
+    except models.DoesNotExist:
+        return jsonify(
+            data={},
+            message="No POI available", 
+            status=400
+        ),400
 
 #---------------SHOW ONE ROUTE --------------------------------------
 @pois.route('/<id>')
@@ -75,3 +82,12 @@ def update_poi(id):
     ),200
 
 #---------------DELETE/DESTROY ROUTE ----------------------------
+@pois.route('/<id>', methods=['DELETE'])
+def delete_trip(id):
+    delete_query = models.PointOfInterest.delete().where(models.PointOfInterest.id == id)
+    nums_of_rows_delete = delete_query.execute()
+    return jsonify(
+        data={},
+        message = f"Successfully deleted {nums_of_rows_delete} trips with id: {id}",
+        status = 200
+    ),200
