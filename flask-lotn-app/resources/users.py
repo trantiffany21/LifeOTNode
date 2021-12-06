@@ -23,12 +23,10 @@ def users_index():
         'status': 200
     }),200
 
-#---------------SHOW ONE ROUTE --------------------------------------
 
 
 #---------------PUT/EDIT ROUTE --------------------------------------
 
-#---------------DELETE/DESTROY ROUTE --------------------------------
 
 #---------------POST/CREATE ROUTE -----------------------------------
 @users.route('/register', methods=['POST'])
@@ -82,16 +80,12 @@ def register():
 def login():
     payload = request.get_json()
     payload['email'] = payload['email'].lower()
-    payload['username'] = payload['username'].lower()
+    # payload['username'] = payload['username'].lower()
 
     try: 
         user = models.User.get(models.User.email == payload['email'])
 
         user_dict = model_to_dict(user)
-        #check the users pw using bcrypt
-        #check_password_hash: 2 args
-        #1. the encrypted pw you are checking against
-        #2. the pw attempt you are trying to verify
         password_is_good = check_password_hash(user_dict['password'], payload['password'])
         print(password_is_good)
         if (password_is_good):
@@ -103,7 +97,6 @@ def login():
                 status=200
             ),200
         else:
-            print("email is no good")
             return jsonify(
                 data={},
                 message="Email or password is incorrect",
@@ -117,14 +110,11 @@ def login():
             status=401
         ),401
 
-#route to show us who is logged in, we can access that object via current_user
+#---------------SHOW USER ROUTE ------------------------------------
 @users.route('/logged_in_user', methods=['GET'])
 def get_logged_in_user():
-    # we can access current_user b/c we called login_user and set up user_loader
     print(current_user)
-    print(type(current_user))
 
-    #current_user.is_authenticated (search in the docs)
     if not current_user.is_authenticated:
         return jsonify(
             data={},
@@ -141,7 +131,7 @@ def get_logged_in_user():
             status=200
         ),200
 
-#logout route
+#---------------LOGOUT USER ROUTE --------------------------------
 @users.route('/logout', methods=['GET'])
 @login_required
 def logout():
