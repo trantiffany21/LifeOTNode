@@ -11,29 +11,29 @@ trips = Blueprint('trips', 'trips')
 
 #---------------SHOW ALL ROUTE --------------------------------------
 @trips.route('/')
-#@login_required
+@login_required
 def trips_index():
     result = models.Trip.select()
 
-    trip_dicts = []
-    for trip in result: 
-        trip_dict = model_to_dict(trip)
-        trip_dicts.append(trip_dict)
-    #change to current user's dogs
-    # current_user_dog_dicts = [model_to_dict(dog) for dog in current_user.dogs]
+    # trip_dicts = []
+    # for trip in result: 
+    #     trip_dict = model_to_dict(trip)
+    #     trip_dicts.append(trip_dict)
+    #change to current user's trips
+    current_user_trip_dicts = [model_to_dict(trip) for trip in current_user.trips]
 
-    # for dog_dict in current_user_dog_dicts:
-    #     dog_dict['owner'].pop('password')
+    for trip_dict in current_user_trip_dicts:
+         trip_dict['user'].pop('password')
 
     return jsonify({
-        'data': trip_dicts,
-        'message': f"Successfully found {len(trip_dicts)} trips", 
+        'data': current_user_trip_dicts,
+        'message': f"Successfully found {len(current_user_trip_dicts)} trips", 
         'status': 200
     }),200
 
 #---------------SHOW ONE ROUTE --------------------------------------
 @trips.route('/<id>')
-#@login_required
+@login_required
 def get_one_trip(id):
     trip = model_to_dict(models.Trip.get_by_id(id))
 
@@ -45,19 +45,14 @@ def get_one_trip(id):
 
 #---------------POST/CREATE ROUTE -------------------------------
 @trips.route('/', methods=['POST'])
+@login_required
 def create_trip():
     payload = request.get_json()
     print(f"payload {payload}")
     new_trip = models.Trip.create(
-    **payload
-    # name = payload['name'],
-    # origin = payload['origin'],
-    # destination = payload['destination'],
-    # lodging = payload['lodging'],
-    # pointsOfInterest = payload['pointsOfInterest']
-    # user = payload['user']
-    )
+    **payload)
     trip_dict = model_to_dict(new_trip)
+    trip_dict['user'].pop('password')
     print(f"trip dict {trip_dict}")
     return jsonify(
         data = trip_dict,
@@ -67,11 +62,15 @@ def create_trip():
 
 #---------------PUT/EDIT ROUTE ----------------------------------
 @trips.route('/<id>', methods=['PUT'])
+@login_required
 def update_trip(id):
     payload = request.get_json()
     update_query = models.Trip.update(**payload).where(models.Trip.id == id).execute()
+    updated_trip = model_to_dict(models.Trip.get_by_id(id))
+    updated_trip['user'].pop('password')
+    
     return jsonify(
-        data = model_to_dict(models.Trip.get_by_id(id)),
+        data = updated_trip,
         message = 'Trip updated successfully',
         status = 200
     ),200
@@ -79,6 +78,7 @@ def update_trip(id):
 
 #---------------DELETE/DESTROY ROUTE ----------------------------
 @trips.route('/<id>', methods=['DELETE'])
+@login_required
 def delete_trip(id):
     trip = models.Trip.get_by_id(id)
     trip.delete_instance(recursive=True)

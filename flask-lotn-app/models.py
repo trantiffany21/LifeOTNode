@@ -13,33 +13,13 @@ class User(UserMixin, Model):
     class Meta: 
         database = DATABASE
 
-
-
-# #lodging model
-# class Lodging(Model):
-#     lodging_name: CharField()
-#     lodging_address: CharField() 
-#     lodging_lat: CharField() 
-#     lodging_long: CharField()
-#     class Meta: 
-#         database=DATABASE
-
 #trip model
 class Trip(Model):
     name = CharField(unique=True)
     origin = CharField()
     destination = CharField()
     lodging = JSONField()
-    # pointsOfInterest = [
-    #     {
-    #     "poi_name": CharField(), 
-    #     "poi_address": CharField(), 
-    #     "poi_lat": CharField(), 
-    #     "poi_long": CharField()
-    # }
-    # ]
-    # ForeignKeyField(PointOfInterest, backref='trips') 
-    # user = ForeignKeyField(User, backref='trips') 
+    user = ForeignKeyField(User, backref='trips') 
     class Meta: 
         database=DATABASE
 
