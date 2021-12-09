@@ -17,7 +17,7 @@ class App extends Component {
       userLoggedIn: false,
       userFormType: "",
       username: "",
-      id: "",
+      userId: "",
       email: ""
     }
   }  
@@ -56,7 +56,7 @@ class App extends Component {
     this.setState({
       userLoggedIn: true,
       username: user.username,
-      id: user.id,
+      userId: user.id,
       email: user.email
     })
     this.getTrips()
@@ -66,7 +66,7 @@ class App extends Component {
       userLoggedIn: false,
       userFormType: "",
       username: "",
-      id: "",
+      userId: "",
       email: ""
     })
   }
@@ -96,7 +96,7 @@ class App extends Component {
       
       {this.state.userLoggedIn && 
         <>
-          <NewTrip baseURL={baseURL} addTrips={this.addTrips} />
+          <NewTrip userId={this.state.userId} baseURL={baseURL} addTrips={this.addTrips} />
           <ShowTrip trips={this.state.trips} baseURL={baseURL} setTrips={this.setTrips}/>
         </>
       }

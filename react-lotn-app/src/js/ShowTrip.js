@@ -90,7 +90,7 @@ export default class ShowTrip extends Component{
       }
     
       deleteTrip = (id) =>{
-        fetch(this.props.baseURL + 'api/v1/trips/' + id, {
+        fetch(this.props.baseURL + 'trips/' + id, {
           method: 'DELETE', 
           credentials: "include"
         }).then(res =>{
@@ -178,8 +178,6 @@ export default class ShowTrip extends Component{
                 <input primary compact type="submit" value="Edit Trip"/>    
               </Form>
             }
-
-
         </div>
         );
     }
