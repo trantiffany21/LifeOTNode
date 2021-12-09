@@ -1,6 +1,5 @@
 from flask import Flask, jsonify
 from flask_login import LoginManager, login_manager
-from flask_cors import CORS
 
 
 from resources.trips import trips
@@ -8,6 +7,7 @@ from resources.users import users
 from resources.pois import pois
 
 import models
+from flask_cors import CORS
 import os 
 from dotenv import load_dotenv
 load_dotenv()
@@ -42,6 +42,7 @@ def unauthorized():
 
 CORS(trips, origins=['http://localhost:3000'], supports_credentials=True) #from react app
 CORS(users, origins=['http://localhost:3000'], supports_credentials=True)
+CORS(pois, origins=['http://localhost:3000'], supports_credentials=True)
 
 #use this blueprint (component)
 app.register_blueprint(trips,url_prefix='/trips')
