@@ -120,13 +120,6 @@ export default class UserLogin extends Component{
                 <Form className="" onSubmit={this.handleLogin}>
                     <Form.Group widths='equal'>
                         <Form.Field
-                            onChange={(e) => this.handleChangeUsername(e)}
-                            id='form-input-control-username'
-                            control={Input}
-                            label='Username'
-                            placeholder='Enter Username'
-                        />
-                        <Form.Field
                             onChange={(e) => this.handleChangeEmail(e)}
                             id='form-input-control-email'
                             control={Input}

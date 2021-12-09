@@ -8,6 +8,9 @@ export default class ShowTrip extends Component{
           editModalOpen: false,
           name: "",
           origin:"",
+          destination:"",
+          lodgingName:"",
+          lodgingAddress:"",
           tripToEdit: {}
         }
       }
@@ -16,6 +19,9 @@ export default class ShowTrip extends Component{
           editModalOpen: true,
           name: trip.name,
           origin: trip.origin,
+          destination: trip.destination,
+          lodgingName: trip.lodging.lodging_name,
+          lodgingAddress: trip.lodging.lodging_address,
           tripToEdit: trip
         })
       }
@@ -30,6 +36,21 @@ export default class ShowTrip extends Component{
               origin:event.target.value
           })
       }
+      handleChangeDestination = (event) =>{
+          this.setState({
+              destination:event.target.value
+          })
+      }
+      handleChangeLodgingName = (event) =>{
+          this.setState({
+              lodgingName:event.target.value
+          })
+      }
+      handleChangeLodgingAddress = (event) =>{
+          this.setState({
+            lodgingAddress:event.target.value
+          })
+      }
     
       handleSubmit = async (e) =>{
         e.preventDefault()
@@ -39,7 +60,12 @@ export default class ShowTrip extends Component{
             method: 'PUT', 
             body:JSON.stringify({
               name: e.target.name.value,
-              origin: e.target.origin.value
+              origin: e.target.origin.value,
+              destination: e.target.destination.value,
+              lodging:{
+                  lodging_name: e.target.lodgingName.value,
+                  lodging_address: e.target.lodgingAddress.value,
+              }
             }),
             headers: {
               'Content-Type' : 'application/json'
@@ -106,15 +132,54 @@ export default class ShowTrip extends Component{
             </tbody>
             </Table> 
             {this.state.editModalOpen &&
-              <form onSubmit={this.handleSubmit}>
-                <label>Name: </label>
-                <input name="name" value={this.state.name} onChange={this.handleChangeName}/> 
-                <label>Origin: </label>
-                <input name="origin" value={this.state.origin} onChange={this.handleChangeOrigin}/>
-                <Button positive compact type="submit" variant="primary" >Edit Trip</Button>
-    
-              </form>
+              <Form onSubmit={this.handleSubmit}>
+                  <Form.Group>
+                    <Form.Field
+                        onChange={(e) => this.handleChangeName(e)}
+                        id='name'
+                        name='name'
+                        control={Input}
+                        label='Name'
+                        value={this.state.name}
+                        />
+                    <Form.Field
+                        onChange={(e) => this.handleChangeOrigin(e)}
+                        id='origin'
+                        name='origin'
+                        control={Input}
+                        label='Origin'
+                        value={this.state.origin}
+                    />
+                    <Form.Field
+                        onChange={(e) => this.handleChangeDestination(e)}
+                        id='destination'
+                        name='destination'
+                        control={Input}
+                        label='Destination'
+                        value={this.state.destination}
+                    />
+                    </Form.Group>
+                    <Form.Field
+                        onChange={(e) => this.handleChangeLodgingName(e)}
+                        id='lodgingName'
+                        name='lodgingName'
+                        control={Input}
+                        label='Lodging Name'
+                        value={this.state.lodgingName}
+                    />
+                    <Form.Field
+                        onChange={(e) => this.handleChangeLodgingAddress(e)}
+                        id='lodgingAddress'
+                        name='lodgingAddress'
+                        control={Input}
+                        label='Lodging Address'
+                        value={this.state.lodgingAddress}
+                    />
+                <input primary compact type="submit" value="Edit Trip"/>    
+              </Form>
             }
+
+
         </div>
         );
     }
