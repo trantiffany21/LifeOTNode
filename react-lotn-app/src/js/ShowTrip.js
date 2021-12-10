@@ -175,7 +175,7 @@ export default class ShowTrip extends Component{
                         label='Lodging Address'
                         value={this.state.lodgingAddress}
                     />
-                <input primary compact type="submit" value="Edit Trip"/>    
+                <Button primary compact  type="submit"> Edit Trip </Button>  
               </Form>
             }
         </div>
