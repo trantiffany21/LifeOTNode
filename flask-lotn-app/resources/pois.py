@@ -31,12 +31,41 @@ def pois_index():
             'message': f"Successfully found {len(poi_dicts)} pois", 
             'status': 200
         }),200
+
+        # current_user_poi_dicts = [model_to_dict(poi) for poi in current_user.trips.pois]
+
+        # for poi_dict in current_user_poi_dicts:
+        #     poi_dict['user'].pop('password')
+
+        # return jsonify({
+        #     'data': current_user_poi_dicts,
+        #     'message': f"Successfully found {len(current_user_poi_dicts)} POIs", 
+        #     'status': 200
+        # }),200
     except models.DoesNotExist:
         return jsonify(
             data={},
             message="No POI available", 
             status=400
         ),400
+
+
+#---------------SHOW CURRENT POI ------------------------------------
+@pois.route('/route/<trip_id>')
+def get_trip_poi(trip_id):
+    query = (models.PointOfInterest.select(models.PointOfInterest, models.Trip).join(models.Trip)).where(models.Trip.id == trip_id)
+    poi_dicts = []
+    for poi in query:
+        poi_dict = model_to_dict(poi)
+        poi_dicts.append(poi_dict)
+
+    return jsonify({
+        'data': poi_dicts,
+        'message': f"Found trip ", 
+        'status': 200
+    }),200
+
+
 
 #---------------SHOW ONE ROUTE --------------------------------------
 @pois.route('/<id>')

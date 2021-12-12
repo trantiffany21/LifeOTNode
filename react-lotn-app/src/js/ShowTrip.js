@@ -11,19 +11,43 @@ export default class ShowTrip extends Component{
           destination:"",
           lodgingName:"",
           lodgingAddress:"",
-          tripToEdit: {}
+          tripToEdit: {},
+          pois: {}
         }
       }
       showEditForm = (trip) =>{
-        this.setState({
-          editModalOpen: true,
-          name: trip.name,
-          origin: trip.origin,
-          destination: trip.destination,
-          lodgingName: trip.lodging.lodging_name,
-          lodgingAddress: trip.lodging.lodging_address,
-          tripToEdit: trip
+        if(this.state.editModalOpen){
+            this.setState({editModalOpen:false})
+        }else{
+            this.setState({
+            editModalOpen: true,
+            name: trip.name,
+            origin: trip.origin,
+            destination: trip.destination,
+            lodgingName: trip.lodging.lodging_name,
+            lodgingAddress: trip.lodging.lodging_address,
+            tripToEdit: trip
+            })
+        }
+      }
+
+      getPois = (trip) =>{
+        fetch(this.props.baseURL + "trips/pois/route/" + trip.id,{credentials: "include"})
+        .then(res => {
+          return res.json()
+        }).then(data => {
+          this.setState({
+            pois: data.data
+          })
+          console.log(this.state.pois)
         })
+      }
+      showRouteForm = (trip) =>{
+          this.setState({
+              routeModalOpen:true,
+              pois: {}
+          })
+          this.getPois(trip)
       }
     
       handleChangeName = (event) =>{
@@ -123,6 +147,7 @@ export default class ShowTrip extends Component{
                   <Table.Cell>{trip.destination}</Table.Cell>
                   <Table.Cell>{trip.lodging.lodging_name}</Table.Cell>
                   <Table.Cell>{trip.lodging.lodging_address}</Table.Cell>
+                  <Table.Cell> <Button positive compact onClick={() => this.showRouteForm(trip)}>Route</Button></Table.Cell>
                   <Table.Cell> <Button positive compact onClick={() => this.showEditForm(trip)}>Edit</Button></Table.Cell>
                   <Table.Cell> <Button negative compact onClick={() => this.deleteTrip(trip.id)}>Delete</Button></Table.Cell>
                 </Table.Row>
