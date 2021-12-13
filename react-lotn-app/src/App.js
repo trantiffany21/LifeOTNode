@@ -29,6 +29,7 @@ class App extends Component {
       this.setState({
         trips: data.data
       })
+      console.log("trips: " + this.state.trips)
     })
   }
 

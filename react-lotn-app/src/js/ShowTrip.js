@@ -1,18 +1,19 @@
 import React,{Component} from "react";
 import { Table,Form, Input, TextArea, Button, Select } from 'semantic-ui-react'
+import POIForm from "./POIForm";
 
 export default class ShowTrip extends Component{
     constructor(props){
         super(props)
         this.state= {
           editModalOpen: false,
+          poiModalOpen: false,
           name: "",
           origin:"",
           destination:"",
           lodgingName:"",
           lodgingAddress:"",
-          tripToEdit: {},
-          pois: {}
+          tripToEdit: {}
         }
       }
       showEditForm = (trip) =>{
@@ -31,50 +32,18 @@ export default class ShowTrip extends Component{
         }
       }
 
-      getPois = (trip) =>{
-        fetch(this.props.baseURL + "trips/pois/route/" + trip.id,{credentials: "include"})
-        .then(res => {
-          return res.json()
-        }).then(data => {
+      showPOIForm = (trip) =>{
           this.setState({
-            pois: data.data
+              poiModalOpen: true,
+              tripToEdit: trip
           })
-          console.log(this.state.pois)
-        })
-      }
-      showRouteForm = (trip) =>{
-          this.setState({
-              routeModalOpen:true,
-              pois: {}
-          })
-          this.getPois(trip)
       }
     
-      handleChangeName = (event) =>{
+      handleChange = (event) =>{
         this.setState({
-            name:event.target.value
+            [event.target.name]:event.target.value
         })
-      }
-      handleChangeOrigin = (event) =>{
-          this.setState({
-              origin:event.target.value
-          })
-      }
-      handleChangeDestination = (event) =>{
-          this.setState({
-              destination:event.target.value
-          })
-      }
-      handleChangeLodgingName = (event) =>{
-          this.setState({
-              lodgingName:event.target.value
-          })
-      }
-      handleChangeLodgingAddress = (event) =>{
-          this.setState({
-            lodgingAddress:event.target.value
-          })
-      }
+    }
     
       handleSubmit = async (e) =>{
         e.preventDefault()
@@ -147,7 +116,7 @@ export default class ShowTrip extends Component{
                   <Table.Cell>{trip.destination}</Table.Cell>
                   <Table.Cell>{trip.lodging.lodging_name}</Table.Cell>
                   <Table.Cell>{trip.lodging.lodging_address}</Table.Cell>
-                  <Table.Cell> <Button positive compact onClick={() => this.showRouteForm(trip)}>Route</Button></Table.Cell>
+                  <Table.Cell> <Button positive compact onClick={() => this.showPOIForm(trip)}>Route</Button></Table.Cell>
                   <Table.Cell> <Button positive compact onClick={() => this.showEditForm(trip)}>Edit</Button></Table.Cell>
                   <Table.Cell> <Button negative compact onClick={() => this.deleteTrip(trip.id)}>Delete</Button></Table.Cell>
                 </Table.Row>
@@ -160,7 +129,7 @@ export default class ShowTrip extends Component{
               <Form onSubmit={this.handleSubmit}>
                   <Form.Group>
                     <Form.Field
-                        onChange={(e) => this.handleChangeName(e)}
+                        onChange={(e) => this.handleChange(e)}
                         id='name'
                         name='name'
                         control={Input}
@@ -168,7 +137,7 @@ export default class ShowTrip extends Component{
                         value={this.state.name}
                         />
                     <Form.Field
-                        onChange={(e) => this.handleChangeOrigin(e)}
+                        onChange={(e) => this.handleChange(e)}
                         id='origin'
                         name='origin'
                         control={Input}
@@ -176,7 +145,7 @@ export default class ShowTrip extends Component{
                         value={this.state.origin}
                     />
                     <Form.Field
-                        onChange={(e) => this.handleChangeDestination(e)}
+                        onChange={(e) => this.handleChange(e)}
                         id='destination'
                         name='destination'
                         control={Input}
@@ -185,7 +154,7 @@ export default class ShowTrip extends Component{
                     />
                     </Form.Group>
                     <Form.Field
-                        onChange={(e) => this.handleChangeLodgingName(e)}
+                        onChange={(e) => this.handleChange(e)}
                         id='lodgingName'
                         name='lodgingName'
                         control={Input}
@@ -193,7 +162,7 @@ export default class ShowTrip extends Component{
                         value={this.state.lodgingName}
                     />
                     <Form.Field
-                        onChange={(e) => this.handleChangeLodgingAddress(e)}
+                        onChange={(e) => this.handleChange(e)}
                         id='lodgingAddress'
                         name='lodgingAddress'
                         control={Input}
@@ -203,6 +172,8 @@ export default class ShowTrip extends Component{
                 <Button primary compact  type="submit"> Edit Trip </Button>  
               </Form>
             }
+
+            {this.state.poiModalOpen && <POIForm baseURL={this.props.baseURL} trip={this.state.tripToEdit} />}
         </div>
         );
     }
