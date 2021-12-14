@@ -1,144 +1,214 @@
-import React,{Component} from "react";
-import { Form, Input, TextArea, Button, Select } from 'semantic-ui-react'
+import React, { Component } from "react";
+import { useNavigate, Navigate } from 'react-router-dom'
+import { Form, Input, Button } from 'semantic-ui-react'
+import NewTrip from './NewTrip'
+import ShowTrip from './ShowTrip'
 
-export default class UserLogin extends Component{
-    constructor(props){
+let baseURL = process.env.REACT_APP_BASEURL
+
+export default class UserLogin extends Component {
+    constructor(props) {
         super(props)
-        this.state= {
+        this.state = {
+            trips: [],
+            userFormType: "",
+            userId: "",
             username: "",
             email: "",
-            password: ""
+            password: "",
+            userLoggedIn: false,
+            newTripItem: false
         }
-      }
-    handleChangeUsername = (event) =>{
-        console.log(event.target.value)
+    }
+    getTrips = () => {
+        fetch(baseURL + "trips/", { credentials: "include" })
+            .then(res => {
+                return res.json()
+            }).then(data => {
+                this.setState({
+                    trips: data.data
+                })
+                console.log("trips: " + this.state.trips)
+            })
+    }
+
+    addTrips = (newTrip) => {
+        console.log("newtrip: " + newTrip)
+        const copyTrips = [...this.state.trips]
+        copyTrips.push(newTrip)
         this.setState({
-            username:event.target.value
+            trips: copyTrips
         })
     }
-    handleChangeEmail = (event) =>{
+    setTrips = (trips) => {
         this.setState({
-            email:event.target.value
+            trips: trips
         })
     }
-    handleChangePassword = (event) =>{
+    setUserForm = (type) => {
         this.setState({
-            password:event.target.value
+            userFormType: type
         })
     }
 
-    handleSubmit =(event) =>{
+    setUser = (user) => {
+        this.setState({
+            userLoggedIn: true,
+            username: user.username,
+            userId: user.id,
+            email: user.email
+        })
+        this.getTrips()
+    }
+    clearUser = () => {
+        this.setState({
+            userLoggedIn: false,
+            userFormType: "",
+            username: "",
+            userId: "",
+            email: ""
+        })
+    }
+
+    handleChange = (event) => {
+        this.setState({
+            [event.target.name]: event.target.value
+        })
+    }
+
+    handleSubmit = (event) => {
         console.log(this.state.username)
         console.log(this.state.email)
         console.log(this.state.password)
         event.preventDefault()
-        fetch(this.props.baseURL + 'auth/' + 'register', {
+        const regUrl = baseURL + 'auth/' + 'register'
+        fetch(regUrl, {
             method: 'POST',
             body: JSON.stringify({
-                username: this.state.username, 
+                username: this.state.username,
                 email: this.state.email,
                 password: this.state.password
             }),
-            headers:{'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             credentials: "include"
-        }).then(res =>{
+        }).then(res => {
             return res.json()
-        }).then(data =>{
-            if(data.status === 201){
-                this.props.setUser(data.data)
-                this.props.setUserForm("")
-                this.setState({
-                    username: "",
-                    email: "",
-                    password: ""
-                })
+        }).then(data => {
+            if (data.status === 201) {
+                this.setUser(data.data)
+                this.setUserForm("")
             }
-        }).catch(error =>console.error({'Error': error}))
+        }).catch(error => console.error({ 'Error': error }))
     }
-    
-    handleLogin =(event) =>{
-        event.preventDefault()
-        fetch(this.props.baseURL + 'auth' + '/login', {
-            method: 'POST',
-            body: JSON.stringify({
-                username: this.state.username, 
-                email: this.state.email,
-                password: this.state.password
-            }),
-            headers:{'Content-Type': 'application/json'},
-            credentials: "include"
-        }).then(res =>{
-            return res.json()
-        }).then(data =>{
-            if(data.status === 200){
-                this.props.setUser(data.data)
-                this.props.setUserForm("")
-                this.setState({
-                    username: "",
-                    email: "",
-                    password: ""
-                })
-            }
-        }).catch(error =>console.error({'Error': error}))
-    }
-    
-      render(){
-      return (
-        <div className="UserContainer">
 
-            {
-                this.props.userFormType === "register" &&
-                <Form className="" onSubmit={this.handleSubmit}>
-                    <Form.Group widths='equal'>
-                        <Form.Field
-                            onChange={(e) => this.handleChangeUsername(e)}
-                            id='form-input-control-username'
-                            control={Input}
-                            label='Username'
-                            placeholder='Enter Username'
-                        />
-                        <Form.Field
-                            onChange={(e) => this.handleChangeEmail(e)}
-                            id='form-input-control-email'
-                            control={Input}
-                            label='Email'
-                            placeholder='Enter Email'
-                        />
-                        <Form.Field
-                            onChange={(e) => this.handleChangePassword(e)}
-                            id='form-input-control-password'
-                            control={Input}
-                            label='Password'
-                            placeholder='Enter Password'
-                        />
-                    </Form.Group>
-                    <input primary compact type="submit" value="Register"/>
-                </Form>
+    handleLogin = (event) => {
+        console.log(this.state.username)
+        console.log(this.state.email)
+        console.log(this.state.password)
+        event.preventDefault()
+        fetch(baseURL + 'auth' + '/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                username: this.state.username,
+                email: this.state.email,
+                password: this.state.password
+            }),
+            headers: { 'Content-Type': 'application/json' },
+            credentials: "include"
+        }).then(res => {
+            return res.json()
+        }).then(data => {
+            if (data.status === 200) {
+                this.setUser(data.data)
+                this.setUserForm("")
             }
-            {
-                this.props.userFormType === "login" &&
-                <Form className="" onSubmit={this.handleLogin}>
-                    <Form.Group widths='equal'>
-                        <Form.Field
-                            onChange={(e) => this.handleChangeEmail(e)}
-                            id='form-input-control-email'
-                            control={Input}
-                            label='Email'
-                            placeholder='Enter Email'
-                        />
-                        <Form.Field
-                            onChange={(e) => this.handleChangePassword(e)}
-                            id='form-input-control-password'
-                            control={Input}
-                            label='Password'
-                            placeholder='Enter Password'
-                        />
-                    </Form.Group>
-                    <input primary compact type="submit" value="Login"/>
-                </Form>
-            }
-            
-            
-        </div>
-      );}
+        }).catch(error => console.error({ 'Error': error }))
+    }
+    setNewTripItem = () => {
+        this.setState({newTripItem: !this.state.newTripItem})
+    }
+
+    render() {
+        if (this.state.userLoggedIn) {
+            return(
+            <>
+                <ShowTrip trips={this.state.trips} baseURL={baseURL} setTrips={this.setTrips}/>
+                <Button onClick={()=> this.setNewTripItem()}>+ New Trip</Button>
+                {this.state.newTripItem &&
+                    <NewTrip userId={this.state.userId} baseURL={baseURL} addTrips={this.addTrips} />
+                }
+            </>)
+        } else {
+            return (
+                <div className="UserContainer">
+                    <Button primary compact className="" onClick={() => this.setUserForm("register")}>Register</Button>
+                    <Button secondary compact className="" onClick={() => this.setUserForm("login")}>Login</Button>
+                    {
+                        this.state.userFormType === "register" &&
+                        <Form className="" onSubmit={this.handleSubmit}>
+                            <Form.Group widths='equal'>
+                                <Form.Field
+                                    onChange={(e) => this.handleChange(e)}
+                                    id='form-input-control-username'
+                                    control={Input}
+                                    name="username"
+                                    label='Username'
+                                    placeholder='Enter Username'
+                                />
+                                <Form.Field
+                                    onChange={(e) => this.handleChange(e)}
+                                    id='form-input-control-email'
+                                    control={Input}
+                                    name="email"
+                                    label='Email'
+                                    placeholder='Enter Email'
+                                />
+                                <Form.Field
+                                    onChange={(e) => this.handleChange(e)}
+                                    id='form-input-control-password'
+                                    control={Input}
+                                    name="password"
+                                    label='Password'
+                                    placeholder='Enter Password'
+                                />
+                            </Form.Group>
+                            <Button primary compact type="submit">Register</Button>
+                        </Form>
+                    }
+                    {
+                        this.state.userFormType === "login" &&
+                        <Form className="" onSubmit={this.handleLogin}>
+                            <Form.Group widths='equal'>
+                                <Form.Field
+                                    onChange={(e) => this.handleChange(e)}
+                                    id='form-input-control-email'
+                                    control={Input}
+                                    name="email"
+                                    label='Email'
+                                    placeholder='Enter Email'
+                                />
+                                <Form.Field
+                                    onChange={(e) => this.handleChange(e)}
+                                    id='form-input-control-password'
+                                    control={Input}
+                                    name="password"
+                                    label='Password'
+                                    placeholder='Enter Password'
+                                />
+                            </Form.Group>
+                            <Button primary compact type="submit">Login</Button>
+                        </Form>
+                    }
+                    {this.state.userLoggedIn &&
+                        <>
+                            <Button className="" onClick={() => this.clearUser()}>Logout</Button>
+                        </>
+                    }
+
+
+
+                </div>
+            );
+        }
+    }
 }
