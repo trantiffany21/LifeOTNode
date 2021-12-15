@@ -20,6 +20,7 @@ def trips_index():
     #     trip_dict = model_to_dict(trip)
     #     trip_dicts.append(trip_dict)
     #change to current user's trips
+    print(current_user)
     current_user_trip_dicts = [model_to_dict(trip) for trip in current_user.trips]
 
     for trip_dict in current_user_trip_dicts:
