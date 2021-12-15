@@ -40,9 +40,9 @@ def unauthorized():
         status=401
     ),401
 
-CORS(trips, origins=['http://localhost:3000'], supports_credentials=True) #from react app
-CORS(users, origins=['http://localhost:3000'], supports_credentials=True)
-CORS(pois, origins=['http://localhost:3000'], supports_credentials=True)
+CORS(trips, origins=['http://localhost:3000','https://lifeonthenode.herokuapp.com'], supports_credentials=True) #from react app
+CORS(users, origins=['http://localhost:3000','https://lifeonthenode.herokuapp.com'], supports_credentials=True)
+CORS(pois, origins=['http://localhost:3000','https://lifeonthenode.herokuapp.com'], supports_credentials=True)
 
 #use this blueprint (component)
 app.register_blueprint(trips,url_prefix='/trips')
