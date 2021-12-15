@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, after_this_request
+from flask import Flask, jsonify, after_this_request, session
 from flask_login import LoginManager, login_manager
 
 
@@ -55,6 +55,7 @@ def before_request():
     """Connect to the db before each request"""
     print("you should see this before each request") # optional -- to illustrate that this code runs before each request -- similar to custom middleware in express.  you could also set it up for specific blueprints only.
     models.DATABASE.connect()
+    session.permanent = True
 
     @after_this_request # use this decorator to Executes a function after this request
     def after_request(response):
