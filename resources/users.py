@@ -25,9 +25,6 @@ def users_index():
 
 
 
-#---------------PUT/EDIT ROUTE --------------------------------------
-
-
 #---------------POST/CREATE ROUTE -----------------------------------
 @users.route('/register', methods=['POST'])
 def register():

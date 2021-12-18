@@ -15,11 +15,6 @@ trips = Blueprint('trips', 'trips')
 def trips_index():
     result = models.Trip.select()
 
-    # trip_dicts = []
-    # for trip in result: 
-    #     trip_dict = model_to_dict(trip)
-    #     trip_dicts.append(trip_dict)
-    #change to current user's trips
     print(current_user)
     current_user_trip_dicts = [model_to_dict(trip) for trip in current_user.trips]
 
@@ -83,13 +78,6 @@ def update_trip(id):
 def delete_trip(id):
     trip = models.Trip.get_by_id(id)
     trip.delete_instance(recursive=True)
-    # delete_query_trip = models.Trip.delete().where(models.Trip.id == id)
-    # nums_of_rows_delete_trip = delete_query_trip.execute()
-    #delete POIs associated
-    # delete_query_poi = models.PointOfInterest
-    # print(model_to_dict(delete_query_poi))
-    #models.PointOfInterest.delete().where(models.PointOfInterest.trip.id == id)
-    #nums_of_rows_delete_poi = delete_query_poi.execute()
     return jsonify(
         data={},
         message = f"Successfully deleted trip with id: {id} and  POIs",
